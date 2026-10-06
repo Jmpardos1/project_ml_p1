@@ -5,9 +5,9 @@ Aprendizaje de Máquina 2026-20, Universidad de los Andes.
 Clasificar reseñas de productos en español en `negativo`, `neutral` o `positivo` usando **solo scikit-learn** y
 representaciones clásicas (bag-of-words, TF-IDF, n-gramas). Métrica de Kaggle: **accuracy**.
 
-> Estado al 2 de octubre de 2026: 4 experimentos terminados, 4 envíos generados.
-> Mejor modelo según la CV: **experimento 4** (accuracy CV 0,901 · test 0,898).
-> Score público de Kaggle conocido: experimento 2 → 0,88 (otros equipos reportan ≈ 0,90).
+> Estado al 6 de octubre de 2026: 9 experimentos terminados, 9 envíos generados. **Fase de experimentación cerrada.**
+> **Modelo final: experimento 9** — mejor score público del grupo: **0,91555** (CV 0,9065 · test 0,903).
+> Siguiente paso: consolidar el notebook único de entrega (ver sección 7).
 
 ---
 
@@ -18,15 +18,23 @@ representaciones clásicas (bag-of-words, TF-IDF, n-gramas). Métrica de Kaggle:
 | 1 | `experimento1.ipynb` | Línea base: TF-IDF (1,2) del texto completo | LR, `C = 10` | 0,736 ± 0,013 | 0,724 | 0,721 | `submission_01.csv` | pendiente |
 | 2 | `experimento2.ipynb` | TF-IDF por partes: texto completo + **última oración** + **tras el último conector** | LR, `C = 10` | 0,887 ± 0,010 | **0,899** | 0,686 | `submission_02.csv` | **0,88** |
 | 3 | `experimento3.ipynb` | TF-IDF por partes: texto completo + **oraciones con conector conclusivo** (sin usar posición) | LR, `C = 10` | 0,798 ± 0,015 | 0,796 | **0,800** | `submission_03.csv` | pendiente |
-| 4 | `experimento4.ipynb` | Como el 2, pero con la **última oración con opinión** (detector de opinión + lista de evasivas) | LinearSVC, `C = 0,2` | **0,901 ± 0,006** | 0,898 | 0,736 | `submission_04.csv` | pendiente |
+| 4 | `experimento4.ipynb` | Como el 2, pero con la **última oración con opinión** (detector de opinión + lista de evasivas) | LinearSVC, `C = 0,2` | 0,901 ± 0,006 | 0,898 | 0,736 | `submission_04.csv` | pendiente |
+| 5 | `experimento5.ipynb` | Ajuste del detector (se le quita el conector inicial) + análisis del techo | LinearSVC, `C = 0,2` | 0,902 ± 0,008 | 0,902 | 0,738 | `submission_05.csv` | pendiente |
+| 6 | `experimento6.ipynb` | **Dos niveles (stacking):** modelo del 5 + polaridad por oración → combinador | HistGradientBoosting | 0,904 ± 0,010 | **0,915** | 0,735 | `submission_06.csv` | ≈ 0,90 |
+| 7 | `experimento7.ipynb` | Misma técnica del 6, **variando los modelos** de nivel 1 y nivel 2 (≈ 50 combinaciones) | SVM RBF, `C = 1` | **0,907 ± 0,009** | 0,905 | 0,746 | `submission_07.csv` | 0,91 |
+| 8 | `experimento8.ipynb` | Como el 7, con un combinador **lineal**: regresión logística + interacciones de grado 2 | LR, `C = 0,03` | 0,905 ± 0,008 | 0,910 | **0,762** | `submission_08.csv` | algo menos de 0,91 |
+| **9** | `experimento9.ipynb` | Como el 7, con **corrección de tipeo** en el preprocesamiento | SVM RBF, `C = 1` | 0,907 ± 0,009 | 0,903 | 0,750 | `submission_09.csv` | **0,91555** |
 
 \* *Robustez:* accuracy en el test con las oraciones de cada reseña desordenadas al azar (mide cuánto depende el
-modelo de que el veredicto esté al final). El clasificador y su `C` se eligieron en cada experimento con su propia CV.
+modelo de que el veredicto esté al final). El clasificador y sus hiperparámetros se eligieron en cada experimento
+con su propia CV.
 
-**Mejor modelo para la competencia: experimento 4** (gana al experimento 2 en los 5 folds de la CV). En el test la
-diferencia con el experimento 2 no se confirma (0,8975 frente a 0,8992, dentro del error estándar ≈ 0,006); el score
-público de `submission_04` ayudará a confirmarlo. Cuando suban los envíos, anoten el score en esta tabla y en la
-columna `kaggle_publico` del notebook correspondiente.
+**Modelo final: experimento 9**, porque el enunciado pide entregar el modelo del **envío con mejor score público**.
+En la validación interna los experimentos 7, 8 y 9 están **empatados** (CV 0,905–0,907, diferencias menores que la
+variación entre folds); la ventaja en el leaderboard público probablemente se deba en parte al ruido.
+
+**Para el ranking privado** marquen en Kaggle (pestaña *Submissions*) como envíos finales `submission_09` y, como
+cobertura, `submission_07` u `submission_08`.
 
 ---
 
@@ -42,6 +50,11 @@ project_ml_p1/
 ├── experimento2.ipynb        # experimento 2 (+ prueba de robustez)
 ├── experimento3.ipynb        # experimento 3 (veredicto por contenido)
 ├── experimento4.ipynb        # experimento 4 (última oración con opinión + LinearSVC)
+├── experimento5.ipynb        # experimento 5 (ajuste del detector + análisis del techo)
+├── experimento6.ipynb        # experimento 6 (dos niveles con HistGradientBoosting)
+├── experimento7.ipynb        # experimento 7 (variación de modelos; SVM RBF)
+├── experimento8.ipynb        # experimento 8 (combinador lineal con interacciones)
+├── experimento9.ipynb        # experimento 9 (corrección de tipeo) — MODELO FINAL
 ├── envios/
 │   └── submission_XX.csv     # un archivo por experimento enviado
 └── modelos/
@@ -68,12 +81,12 @@ preprocesamiento**. Los demás notebooks solo repiten un resumen de la configura
 - Los resultados son **determinísticos**: misma semilla, mismo split y mismos folds. Ejecutar de nuevo un notebook
   completo da exactamente las mismas métricas. Con otras versiones de las librerías podrían cambiar los últimos
   decimales.
-- Tiempos aproximados: experimento 1 ≈ 1 min, 2 ≈ 3 min, 3 ≈ 4 min, **4 ≈ 15 min** (el detector se entrena en cada
-  fold y la búsqueda compara dos clasificadores).
+- Tiempos aproximados: experimentos 1–3 ≈ 1–4 min; 4 ≈ 15 min; 5 ≈ 35 min; 6 ≈ 45 min; 7, 8 y 9 ≈ 25–40 min (el
+  modelo de dos niveles entrena el nivel 1 seis veces por el cross-fitting).
 - **Cargar un `.joblib`:** `joblib` guarda las funciones y clases propias **por referencia**. Antes de cargarlo hay
-  que definir las del notebook correspondiente: `dividir_oraciones`, `separar_partes` (modelos 2 y 3) o la clase
-  `PartesConOpinion` y sus funciones (`es_evasiva`, `sin_evasivas`, `tras_ultimo_conector`; modelo 4). Además, hay que
-  pasarle texto ya normalizado con `normalizar_texto()`.
+  que ejecutar las celdas de definiciones del notebook correspondiente (por ejemplo, para el modelo 9:
+  `PartesE5`, `CorrectorTipeo`, `fit_nivel1`, `features_nivel1`, `DosNivelesV2`...). Además, hay que pasarle texto ya
+  normalizado con `normalizar_texto()`.
 
 ---
 
@@ -210,10 +223,62 @@ puntuación (hace falta para separar oraciones).
 - **Debilidad del detector:** como sus ejemplos "con opinión" casi siempre empiezan con un conector, a veces confunde
   "empieza con `la verdad`" con "tiene opinión" y elige una oración descriptiva.
 
-### Decisión
-**Competir con la base del experimento 4** y reportar la robustez en cada experimento siguiente. Los experimentos 2 y
-3 quedan como evidencia del compromiso entre accuracy y robustez para la sustentación, y motivan la Parte 2 (modelos
-secuenciales).
+### Experimento 5 — Ajuste del detector y análisis del techo
+- Ninguna variante del detector supera el ruido entre folds; la mejor (quitar el conector inicial antes del detector)
+  da +0,13. Ajustar el umbral, agregar ejemplos o separar las oraciones por tipo de conector empeora.
+- **Segundo grupo de etiquetas casi aleatorias:** cuando la última opinión empieza con un conector **secundario**
+  (`por otro lado`, `de paso`, `por cierto`, `ademas`) y contradice a la anterior, la etiqueta coincide con cualquiera
+  de las dos ≈ 50 % de las veces. Con `eso sí` o sin conector, en cambio, sigue a la última opinión el 94–95 %.
+- **Techo estimado ≈ 0,937** (≈ 12,6 % de las reseñas con etiqueta casi aleatoria). Fuera de esos grupos el modelo
+  ya acierta el **95,7 %**.
+
+### Experimento 6 — Modelo en dos niveles (stacking)
+- **Nivel 1:** el modelo del 5 (puntajes por clase) + un modelo de polaridad por oración (TF-IDF + LR).
+- **Nivel 2:** un combinador sobre **17 features densas** (puntajes, polaridad de las últimas tres opiniones, número
+  de opiniones, evasiva final, opiniones opuestas, tipo de conector de la última y la penúltima opinión).
+- **Cross-fitting:** las features con las que aprende el combinador se calculan con modelos de nivel 1 que no vieron
+  cada reseña (5 particiones internas + 1 entrenamiento final). Sin cross-fitting, el LinearSVC acierta 97,7 % sobre
+  sus propias reseñas de entrenamiento (frente a ≈ 90 % real), el combinador aprende a confiar de más y el stacking
+  queda **peor que el modelo de un nivel** (medido en el experimento 7).
+- Con HistGradientBoosting: CV 0,904 (+0,17), test **0,915**, mucho menos sobreajuste (train 0,939 frente a 0,977).
+
+### Experimento 7 — Variación de modelos
+- Se calculan una vez las features de nivel 1 (caché) y se prueban **≈ 50 combinaciones** de modelos base
+  (LinearSVC, LR, ComplementNB y combinaciones) × combinadores (HGB, LR L1/L2/elastic net, SVM RBF, Random Forest,
+  Extra Trees, KNN, votaciones).
+- **LR regularizada como combinador no mejora** (0,898–0,904): solo suma features, y la ganancia del segundo nivel está
+  en **interacciones no lineales**. Los combinadores no lineales (SVM RBF, RF, ET) quedan en ≈ 0,906–0,908.
+- Modelo elegido: LinearSVC → SVM RBF (`C = 1`): CV 0,907, Kaggle **0,91**.
+- **Ablación del combinador:** solo con los puntajes del LinearSVC no aporta nada (0,9024); con las polaridades,
+  0,9050; con polaridades + estructura, 0,9071. El combinador corrige al LinearSVC sobre todo en reseñas con final
+  evasivo o conectores secundarios.
+- Nota técnica: en scikit-learn 1.9 la regularización L1/elastic net se fija con `l1_ratio` (no con `penalty`).
+
+### Experimento 8 — Combinador lineal con interacciones
+- Reemplaza el SVM RBF (difícil de sustentar) por **LR + interacciones de grado 2** (`PolynomialFeatures`, `C = 0,03`):
+  CV 0,905 (empate), test 0,910, el menos sobreajustado y el más robusto de los modelos de dos niveles.
+- Sus coeficientes muestran reglas legibles: se confía **menos** en el LinearSVC cuando la reseña tiene muchas
+  opiniones, termina en evasiva u opiniones opuestas.
+- **LR en todo** (detector, base, polaridad y combinador) no alcanza: ≈ 0,90, como el experimento 4.
+
+### Experimento 9 — Corrección de tipeo
+- Corrector por **distancia de edición 1** contra el vocabulario frecuente del entrenamiento de cada fold (sin
+  etiquetas): corrige 933 errores reales (`reslto → resulto`, `espectacullar → espectacular`) y reduce 39 % las
+  palabras que aparecen una sola vez.
+- Mejora el modelo de un nivel (+0,13), pero en el de dos niveles es un empate (0,9065 frente a 0,9071).
+- **Kaggle público: 0,91555**, el mejor del grupo → **modelo final**.
+
+### Decisión final
+- **Meseta confirmada:** desde el experimento 6, todas las ideas quedan entre 0,904 y 0,908 de CV, con diferencias
+  menores que la variación entre folds y que el ruido del leaderboard público. Los ≈ 3 puntos que faltan para el techo
+  son errores dispersos que una representación de bolsa de palabras no captura; aprovecharlos requiere modelos
+  secuenciales (Parte 2).
+- **Modelo final de la Parte 1: experimento 9** (mejor score público, como exige el enunciado). Alternativa
+  equivalente y más fácil de sustentar: experimento 8.
+- La **mayor parte de la mejora** del proyecto vino de la **representación** (texto por partes, detector de opinión,
+  polaridad por oración), no de la elección del clasificador: 0,736 → 0,887 (exp. 2) → 0,901 (exp. 4) → 0,907.
+- Los experimentos 2 y 3 quedan como evidencia del compromiso entre accuracy y robustez: todos los modelos finales
+  dependen de que el veredicto esté al final de la reseña, como ocurre en estos datos.
 
 ### Descartes documentados
 | Descartado | Motivo |
@@ -228,58 +293,37 @@ secuenciales).
 | N-gramas de palabras largos (1,3)+ en el texto completo | Empeoran (experimento 3): son casi únicos y no capturan el orden de largo alcance. |
 | N-gramas de caracteres en la última oración con opinión | Probados en el experimento 4: no aportan (0,898 frente a 0,899 sin ellos). |
 | Intentar predecir las reseñas que terminan en evasiva | Su etiqueta es prácticamente aleatoria (experimento 4, sección 2.2). |
+| Separar las oraciones por tipo de conector (interacción en TF-IDF) | Empeora: cada columna queda con pocos datos (experimento 5). |
+| Stacking sin cross-fitting | El combinador aprende a confiar de más en el nivel 1; queda peor que el modelo de un nivel (experimento 7). |
+| Stemming, trigramas en la última opinión | Sin mejora (exploración del experimento 9). |
 
 ---
 
-## 6. Margen de acción y próximos experimentos (sobre la base del experimento 4)
+## 6. Cómo se buscaron las mejoras (método)
 
-### ¿Cuánto se puede mejorar?
-
-| | Accuracy |
-|---|---|
-| Actual (CV, experimento 4) | ≈ 0,90 |
-| Techo estimado (16 % de negativo/positivo con evasiva final, etiquetas aleatorias) | ≈ 0,94 |
-| **Margen corregible** | **≈ 4 puntos**: el 7,3 % de error en reseñas negativo/positivo **sin** evasiva final |
-
-Cada idea nueva tiene que atacar esos ≈ 4 puntos. Cambiar de clasificador o afinar `C` aporta décimas; lo que mueve
-la accuracy es **qué información recibe cada parte del modelo**.
-
-### Cómo buscar mejoras (método)
 1. **Análisis de errores** con `cross_val_predict` sobre `X_train` del mejor modelo → buscar un patrón con tasa de
    error alta (inicio de la última oración, largo, conector, grupo).
 2. **Hipótesis concreta** sobre por qué falla ese patrón.
 3. **Ablación:** un cambio a la vez, midiendo cuánto aporta.
 4. **Verificar por grupo y fold por fold:** la mejora debe aparecer en el grupo que se quería corregir.
-5. Al final, ajustar clasificador y `C` con CV (ahí casi no está la ganancia).
+5. Al final, ajustar clasificador e hiperparámetros con CV (ahí casi no está la ganancia).
 
-### Experimentos propuestos
-
-Máximo ≈ 10 envíos en total (van 4). Se envía solo si la mejora en CV supera el ruido entre folds.
-
-| # | Experimento | Qué probar | Por qué |
-|---|---|---|---|
-| 5 | **Detector de opinión mejorado** | Quitar el conector inicial de la oración antes de pasarla al detector (que aprenda del contenido, no del conector); ajustar el umbral con CV (`partes__umbral` en la grilla); ejemplos "con opinión" más variados | El detector es lo que más aportó y tiene un sesgo conocido hacia oraciones que empiezan con conector |
-| 6 | **Tipo de conector + opinión anterior** | Agregar a la última oración con opinión un token con su tipo de conector (`TIPO_conclusivo`, `TIPO_concesivo`, `TIPO_eso_si`); darle su propio TF-IDF a la **penúltima oración con opinión** | Un veredicto introducido por "aun así" pesa distinto que uno introducido por "de paso"; las reseñas difíciles tienen dos opiniones de signo contrario |
-| 7 | **Representación por parte + negación** | `min_df`, n-gramas (1,3) solo en la última oración con opinión, binario frente a TF-IDF; marcar la negación (`no_funciona`) dentro de esa oración; stemming | Ajuste fino de la parte que más pesa |
-| 8 | **Otros clasificadores** | MultinomialNB / ComplementNB con su grilla de `alpha`, en el mismo `GridSearchCV` que LR y LinearSVC | Completar la comparación de modelos (esperable: no supera a los lineales) |
-| 9 | **Ajuste fino conjunto / ensamble** | Grilla fina alrededor del mejor modelo; votación LR + LinearSVC; L1 / Elastic Net | Últimos décimos |
-| 10 | Reserva | Solo si el análisis de errores sugiere algo concreto | — |
+Evolución de la accuracy de CV: **0,736** (exp. 1, bolsa de palabras) → **0,887** (exp. 2, final de la reseña) →
+**0,901** (exp. 4, detector de opinión) → **0,904–0,907** (exp. 6–9, dos niveles). Techo estimado ≈ 0,937.
 
 ---
 
-## 7. Pendientes
+## 7. Pendientes (consolidación para la entrega)
 
-- [ ] **Subir a Kaggle** `submission_01`, `03` y `04.csv` y registrar el score público (tabla de la sección 1 y
-      columna `kaggle_publico`). Mínimo **5 envíos distintos** para que cuente la participación.
-- [ ] Confirmar que el 0,88 público corresponde a `submission_02.csv`.
-- [ ] Agregar en el análisis del experimento 3 el matiz sobre la prueba de robustez y la tabla de n-gramas largos.
-- [ ] Agregar en cada notebook una celda que imprima las versiones de las librerías, y un `requirements.txt`.
-- [ ] Al terminar: **consolidar todo en un único notebook final** (la entrega exige uno solo), con una tabla resumen de
-      todos los experimentos, y guardar el `.joblib` del **mejor envío del leaderboard público**.
-- [ ] Antes de la entrega: meter la normalización dentro del pipeline del modelo final, para que el `.joblib` reciba
-      texto crudo.
-- [ ] Confirmar con el profesor que LinearSVC (SVM) cuenta como modelo "visto en la primera parte del curso" (si no,
-      la regresión logística rinde prácticamente igual en el experimento 4).
+- [ ] **Notebook único de entrega** (el enunciado exige uno solo): exploración, preprocesamiento, validación, la
+      historia de los 9 experimentos con su tabla resumen y el **modelo final del experimento 9**.
+- [ ] Guardar el `.joblib` final con la normalización dentro del pipeline (que reciba texto crudo) y verificar que, al
+      cargarlo, reproduce exactamente `submission_09.csv`.
+- [ ] `requirements.txt` con las versiones y una celda que las imprima en el notebook final.
+- [ ] Marcar en Kaggle los envíos finales para el ranking privado: `submission_09` + `submission_07` u `submission_08`.
+- [ ] Registrar los scores públicos que falten (`submission_01`, `03`, `04`, `05`; el exacto del `08`).
+- [ ] Confirmar con el profesor que las SVM (LinearSVC y SVM RBF) cuentan como modelos "vistos en la primera parte del
+      curso" (si no, el experimento 8 usa solo regresión logística como combinador y rinde prácticamente igual).
 
 ### Fechas
 - Cierre de la competencia de la Parte 1: **semana 9**.
