@@ -24,6 +24,8 @@ representaciones clásicas (bag-of-words, TF-IDF, n-gramas). Métrica de Kaggle:
 | 7 | `experimento7.ipynb` | Misma técnica del 6, **variando los modelos** de nivel 1 y nivel 2 (≈ 50 combinaciones) | SVM RBF, `C = 1` | **0,907 ± 0,009** | 0,905 | 0,746 | `submission_07.csv` | 0,91 |
 | 8 | `experimento8.ipynb` | Como el 7, con un combinador **lineal**: regresión logística + interacciones de grado 2 | LR, `C = 0,03` | 0,905 ± 0,008 | 0,910 | **0,762** | `submission_08.csv` | algo menos de 0,91 |
 | **9** | `experimento9.ipynb` | Como el 7, con **corrección de tipeo** en el preprocesamiento | SVM RBF, `C = 1` | 0,907 ± 0,009 | 0,903 | 0,750 | `submission_09.csv` | **0,91555** |
+| 13 | `experimento13.ipynb` | Como el 9, con el **nivel 1 entrenado sin las reseñas que terminan en evasiva** | LR + interacciones, `C = 0,1` | 0,909 ± 0,006 (3 × 5) | 0,908 | 0,774 | `submission_13.csv` | pendiente |
+| 14 | `experimento14.ipynb` | Como el 13, con **regresión logística en todos los niveles** (solo técnicas del curso) | LR + interacciones, `C = 0,1` | 0,906 ± 0,007 (3 × 5) | 0,911 | 0,775 | `submission_14.csv` | pendiente |
 
 \* *Robustez:* accuracy en el test con las oraciones de cada reseña desordenadas al azar (mide cuánto depende el
 modelo de que el veredicto esté al final). El clasificador y sus hiperparámetros se eligieron en cada experimento
@@ -55,6 +57,8 @@ project_ml_p1/
 ├── experimento7.ipynb        # experimento 7 (variación de modelos; SVM RBF)
 ├── experimento8.ipynb        # experimento 8 (combinador lineal con interacciones)
 ├── experimento9.ipynb        # experimento 9 (corrección de tipeo) — MODELO FINAL
+├── experimento13.ipynb       # experimento 13 (nivel 1 sin reseñas evasivas)
+├── experimento14.ipynb       # experimento 14 (regresión logística en todos los niveles)
 ├── envios/
 │   └── submission_XX.csv     # un archivo por experimento enviado
 └── modelos/
@@ -267,6 +271,21 @@ puntuación (hace falta para separar oraciones).
   palabras que aparecen una sola vez.
 - Mejora el modelo de un nivel (+0,13), pero en el de dos niveles es un empate (0,9065 frente a 0,9071).
 - **Kaggle público: 0,91555**, el mejor del grupo → **modelo final**.
+
+### Experimento 13 — Nivel 1 sin reseñas evasivas
+- Modelo del 9 con el nivel 1 (detector, LinearSVC y polaridad) entrenado **sin** las reseñas `negativo`/`positivo`
+  que terminan en evasiva; el nivel 2 sí las ve (excluirlas también ahí empeora). CV repetida 3 × 5 y prueba t
+  corregida (Nadeau–Bengio).
+- CV 0,9088 frente a 0,9049 de la configuración del 9 en las mismas particiones (+0,38, p ≈ 0,16: no significativo).
+- **Sobreajuste:** de ≈ 3 puntos de brecha, ≈ 1 es memorización de etiquetas aleatorias (evasivas: 59 % en train,
+  50 % en validación). La curva de aprendizaje sigue subiendo y la brecha se cierra con más datos: no hay pérdida de
+  capacidad predictiva en datos de la misma distribución.
+
+### Experimento 14 — Regresión logística en todos los niveles
+- Como el 13, con regresión logística (`C = 1`) en lugar del LinearSVC, que no está en el programa del curso.
+- CV 0,9055: −0,34 frente al 13 (p = 0,04), empate con la configuración del 9. Test 0,911.
+- Coeficientes del combinador legibles: confía menos en el modelo base con muchas opiniones, opiniones opuestas o
+  final evasivo.
 
 ### Decisión final
 - **Meseta confirmada:** desde el experimento 6, todas las ideas quedan entre 0,904 y 0,908 de CV, con diferencias
