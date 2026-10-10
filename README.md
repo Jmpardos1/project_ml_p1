@@ -5,9 +5,11 @@ Aprendizaje de Máquina 2026-20, Universidad de los Andes.
 Clasificar reseñas de productos en español en `negativo`, `neutral` o `positivo` usando **solo scikit-learn** y
 representaciones clásicas (bag-of-words, TF-IDF, n-gramas). Métrica de Kaggle: **accuracy**.
 
-> Estado al 6 de octubre de 2026: 9 experimentos terminados, 9 envíos generados. **Fase de experimentación cerrada.**
-> **Modelo final: experimento 9** — mejor score público del grupo: **0,91555** (CV 0,9065 · test 0,903).
-> Siguiente paso: consolidar el notebook único de entrega (ver sección 7).
+> Estado al 9 de octubre de 2026: 14 experimentos terminados (10 a 14 sobre el sobreajuste y la explicabilidad).
+> **Envíos marcados en Kaggle para el ranking privado: `submission_12` + `submission_13`.**
+> Mejor modelo según la validación: **experimento 13** (CV 0,9087 · test 0,908 · público 0,905).
+> Mejor score público: experimento 9 (0,91555), que bajó en el ranking privado.
+> **Pendiente:** elegir el modelo del notebook único de entrega (sección 7).
 
 ---
 
@@ -24,19 +26,26 @@ representaciones clásicas (bag-of-words, TF-IDF, n-gramas). Métrica de Kaggle:
 | 7 | `experimento7.ipynb` | Misma técnica del 6, **variando los modelos** de nivel 1 y nivel 2 (≈ 50 combinaciones) | SVM RBF, `C = 1` | **0,907 ± 0,009** | 0,905 | 0,746 | `submission_07.csv` | 0,91 |
 | 8 | `experimento8.ipynb` | Como el 7, con un combinador **lineal**: regresión logística + interacciones de grado 2 | LR, `C = 0,03` | 0,905 ± 0,008 | 0,910 | **0,762** | `submission_08.csv` | algo menos de 0,91 |
 | **9** | `experimento9.ipynb` | Como el 7, con **corrección de tipeo** en el preprocesamiento | SVM RBF, `C = 1` | 0,907 ± 0,009 | 0,903 | 0,750 | `submission_09.csv` | **0,91555** |
-| 13 | `experimento13.ipynb` | Como el 9, con el **nivel 1 entrenado sin las reseñas que terminan en evasiva** | LR + interacciones, `C = 0,1` | 0,909 ± 0,006 (3 × 5) | 0,908 | 0,774 | `submission_13.csv` | pendiente |
-| 14 | `experimento14.ipynb` | Como el 13, con **regresión logística en todos los niveles** (solo técnicas del curso) | LR + interacciones, `C = 0,1` | 0,906 ± 0,007 (3 × 5) | 0,911 | 0,775 | `submission_14.csv` | pendiente |
+| 10 | `experimento10.ipynb` | Como el 4 (un nivel), con **stemming** (Snowball) en los TF-IDF | LinearSVC, `C = 0,2` | 0,903 ± 0,007 | 0,900 | 0,736 | `submission_10.csv` | por debajo del 4 |
+| 11 | `experimento11.ipynb` | Como el 10, con **selección de 3.000 features por chi²** | LinearSVC, `C = 0,5` | 0,902 ± 0,005 | 0,897 | 0,724 | `submission_11.csv` | 0,89 |
+| 12 | `experimento12.ipynb` | Como el 11, **entrenado sin las reseñas de etiqueta casi aleatoria** | LinearSVC, `C = 0,5` | 0,903 ± 0,007 (3 × 5) | 0,896 | 0,732 | `submission_12.csv` | por debajo del 11 |
+| **13** | `experimento13.ipynb` | Como el 9, con el **nivel 1 entrenado sin las reseñas que terminan en evasiva** | LR + interacciones, `C = 0,1` | **0,909 ± 0,006** (3 × 5) | 0,908 | 0,774 | `submission_13.csv` | 0,905 |
+| 14 | `experimento14.ipynb` | Como el 13, con **regresión logística en todos los niveles** (solo técnicas del curso) | LR + interacciones, `C = 0,1` | 0,906 ± 0,007 (3 × 5) | **0,911** | **0,775** | `submission_14.csv` | pendiente |
 
 \* *Robustez:* accuracy en el test con las oraciones de cada reseña desordenadas al azar (mide cuánto depende el
 modelo de que el veredicto esté al final). El clasificador y sus hiperparámetros se eligieron en cada experimento
-con su propia CV.
+con su propia CV. "(3 × 5)": CV repetida de 15 particiones (experimentos 12 a 14); el resto, CV de 5 folds.
 
-**Modelo final: experimento 9**, porque el enunciado pide entregar el modelo del **envío con mejor score público**.
-En la validación interna los experimentos 7, 8 y 9 están **empatados** (CV 0,905–0,907, diferencias menores que la
-variación entre folds); la ventaja en el leaderboard público probablemente se deba en parte al ruido.
+**Envíos marcados para el ranking privado: `submission_12` + `submission_13`.** Kaggle usa el mejor de los dos.
+- El **13** es el mejor modelo según la validación (CV 0,9087 frente a 0,9049 de la configuración del 9 en las mismas
+  particiones), el más robusto de los modelos de dos niveles, sin kernel y sin aprender del ruido en el nivel 1.
+- El **12** es de otra familia (un nivel, 3.000 features) y difiere del 13 en el 7,4 % de las predicciones de eval:
+  se cubren entre sí.
+- No se marcó el **9** pese a su mejor score público: su ventaja en el público no era significativa y bajó en el
+  ranking privado (ver sección 5, "Comparación estadística").
 
-**Para el ranking privado** marquen en Kaggle (pestaña *Submissions*) como envíos finales `submission_09` y, como
-cobertura, `submission_07` u `submission_08`.
+**Modelo de la entrega: pendiente** (sección 7). El enunciado pide el modelo del **envío con mejor resultado en la
+competencia**; el mejor público es el 9, el preferido por validación es el 13.
 
 ---
 
@@ -56,8 +65,11 @@ project_ml_p1/
 ├── experimento6.ipynb        # experimento 6 (dos niveles con HistGradientBoosting)
 ├── experimento7.ipynb        # experimento 7 (variación de modelos; SVM RBF)
 ├── experimento8.ipynb        # experimento 8 (combinador lineal con interacciones)
-├── experimento9.ipynb        # experimento 9 (corrección de tipeo) — MODELO FINAL
-├── experimento13.ipynb       # experimento 13 (nivel 1 sin reseñas evasivas)
+├── experimento9.ipynb        # experimento 9 (corrección de tipeo; mejor score público)
+├── experimento10.ipynb       # experimento 10 (stemming sobre el modelo de un nivel)
+├── experimento11.ipynb       # experimento 11 (selección de features con chi²)
+├── experimento12.ipynb       # experimento 12 (un nivel sin reseñas ruidosas) — ENVÍO MARCADO
+├── experimento13.ipynb       # experimento 13 (dos niveles, nivel 1 sin reseñas evasivas) — ENVÍO MARCADO
 ├── experimento14.ipynb       # experimento 14 (regresión logística en todos los niveles)
 ├── envios/
 │   └── submission_XX.csv     # un archivo por experimento enviado
@@ -77,7 +89,7 @@ preprocesamiento**. Los demás notebooks solo repiten un resumen de la configura
 | Python | 3.14.6 (Anaconda) |
 | scikit-learn | 1.9.0 |
 | pandas | 3.0.3 |
-| nltk | 3.10.0 (instalado, aún no usado) |
+| nltk | 3.10.0 (stemmer Snowball, experimentos 10 a 12) |
 
 - En VS Code seleccionen el kernel de **Anaconda** (`anaconda3`). El Python del sistema no tiene las librerías.
 - Para comprobar resultados: **Restart & Run All**. Ejecutar celdas sueltas o en desorden puede dejar variables
@@ -86,7 +98,8 @@ preprocesamiento**. Los demás notebooks solo repiten un resumen de la configura
   completo da exactamente las mismas métricas. Con otras versiones de las librerías podrían cambiar los últimos
   decimales.
 - Tiempos aproximados: experimentos 1–3 ≈ 1–4 min; 4 ≈ 15 min; 5 ≈ 35 min; 6 ≈ 45 min; 7, 8 y 9 ≈ 25–40 min (el
-  modelo de dos niveles entrena el nivel 1 seis veces por el cross-fitting).
+  modelo de dos niveles entrena el nivel 1 seis veces por el cross-fitting); 10–12 ≈ 10–20 min; 13 y 14 ≈ 45–60 min
+  (CV repetida 3 × 5 con varias variantes de nivel 1).
 - **Cargar un `.joblib`:** `joblib` guarda las funciones y clases propias **por referencia**. Antes de cargarlo hay
   que ejecutar las celdas de definiciones del notebook correspondiente (por ejemplo, para el modelo 9:
   `PartesE5`, `CorrectorTipeo`, `fit_nivel1`, `features_nivel1`, `DosNivelesV2`...). Además, hay que pasarle texto ya
@@ -270,16 +283,61 @@ puntuación (hace falta para separar oraciones).
   etiquetas): corrige 933 errores reales (`reslto → resulto`, `espectacullar → espectacular`) y reduce 39 % las
   palabras que aparecen una sola vez.
 - Mejora el modelo de un nivel (+0,13), pero en el de dos niveles es un empate (0,9065 frente a 0,9071).
-- **Kaggle público: 0,91555**, el mejor del grupo → **modelo final**.
+- **Kaggle público: 0,91555**, el mejor del grupo. **En el ranking privado bajó ≈ 6 puestos** (información recibida
+  del curso): lo esperable al elegir, entre varios modelos empatados en validación, el que tuvo más suerte en el
+  público.
 
-### Experimento 13 — Nivel 1 sin reseñas evasivas
+### Revisión del enfoque tras el experimento 9
+Al grupo le señalaron que los modelos estaban "muy sobreajustados" y que el stacking no corresponde a lo visto en
+clase. Los experimentos 10 a 14 buscan el modelo que **mejor generalice**, no el de mejor score público:
+- La brecha train − CV del experimento 4 (7,6 puntos) tiene dos componentes: **≈ 4 puntos** son memorización de las
+  ≈ 11 % de reseñas con etiqueta casi aleatoria (85 % de acierto en train frente a 50 % en validación), y el resto es
+  la brecha normal de un modelo lineal con ≈ 40.000 features para 9.600 reseñas.
+- La **curva de aprendizaje** del experimento 4 muestra que la validación sigue subiendo con más datos y la brecha se
+  cierra (14,8 → 7,6 puntos de 1.920 a 7.680 reseñas): es varianza, no un modelo roto.
+- El `C` elegido (0,2) maximiza la validación; regularizar más reduce la brecha pero baja la accuracy.
+
+### Experimento 10 — Stemming
+- Snowball (`nltk`) dentro del tokenizador del TF-IDF (no sobre el texto, para no romper las listas de conectores y
+  evasivas). El vocabulario baja 42 % (4.998 → 2.897 raíces), las features 11 % (42.177 → 37.360).
+- CV 0,9027 frente a 0,9009 del exp. 4 (gana 3 de 5 folds): **empate**. Juntar stemming y corrector de tipeo no suma.
+- No reduce la brecha (7,5 puntos). Queda como base de los experimentos 11 y 12 por ser igual de bueno con menos
+  features.
+
+### Experimento 11 — Selección de features con chi²
+- `SelectKBest(chi2, k)` dentro del pipeline (usa etiquetas: se calcula solo con los datos de entrenamiento de cada
+  fold). La CV es **plana entre 3.000 y 37.360 features** y cae por debajo de 3.000; se elige el `k` más pequeño a
+  una desviación estándar del mejor: **3.000** (8 % de las features).
+- Misma accuracy (CV 0,9015) con la **brecha reducida de 7,5 a 3,2 puntos**.
+- chi² es mejor que regularizar más (`C` menor pierde accuracy) o subir `min_df` (se estanca en ≈ 5 puntos de brecha).
+- Cada reseña conserva en promedio **54 features activas** (28 de la parte final); ninguna queda vacía.
+- Kaggle público: 0,89.
+
+### Experimento 12 — Sin las reseñas de etiqueta casi aleatoria al entrenar
+- Estimador `SinRuidosas`: en `fit` excluye las reseñas `negativo`/`positivo` que terminan en una frase evasiva
+  (1.078 de 9.600); al predecir usa el texto como siempre. La evaluación siempre incluye todas las reseñas.
+- `GridSearchCV` con CV 3 × 5 sobre filtro × clasificador (LinearSVC / regresión logística) × `C`: **excluir las
+  reseñas ruidosas mejora las 6 combinaciones** (más CV y menos brecha). Gana LinearSVC `C = 0,5`: CV **0,9033**,
+  **brecha 1,5 puntos** (exp. 4: 7,6). La regresión logística queda 0,2 puntos por debajo con una brecha similar.
+- Otras formas de regularizar sin chi² (exploración): regresión logística L2, L1 (usa solo ≈ 1.100 features) o
+  elastic net logran la misma accuracy pero con **5–10 puntos de brecha**; más features con chi² (5.000, 8.000)
+  tampoco mejoran y aumentan la brecha.
+- Test 0,896 (en las reseñas predecibles, 95,5 %). Kaggle público: por debajo del 11 (diferencia dentro del ruido).
+
+### Experimento 13 — Dos niveles con el nivel 1 sin reseñas evasivas
 - Modelo del 9 con el nivel 1 (detector, LinearSVC y polaridad) entrenado **sin** las reseñas `negativo`/`positivo`
-  que terminan en evasiva; el nivel 2 sí las ve (excluirlas también ahí empeora). CV repetida 3 × 5 y prueba t
-  corregida (Nadeau–Bengio).
-- CV 0,9088 frente a 0,9049 de la configuración del 9 en las mismas particiones (+0,38, p ≈ 0,16: no significativo).
+  que terminan en evasiva; el nivel 2 sí las ve (excluirlas también ahí empeora: necesita verlas para aprender que
+  en ellas sus features no son fiables). CV repetida 3 × 5 y prueba t corregida (Nadeau–Bengio).
+- Combinador elegido: **regresión logística con interacciones de grado 2** (`C = 0,1`), sin kernel.
+- CV **0,9087** frente a 0,9049 de la configuración del 9 en las mismas particiones (+0,40, p = 0,13: no
+  significativo, pero en la misma dirección en CV, test y robustez). Test 0,908. **Kaggle público: 0,905.**
+- La ganancia está en las reseñas **predecibles** (0,946 → 0,950), no en las ambiguas.
+- El grupo "última opinión con conector secundario" **no es ruido** en su versión simple (79 % de acierto): solo se
+  filtran las reseñas que terminan en evasiva.
 - **Sobreajuste:** de ≈ 3 puntos de brecha, ≈ 1 es memorización de etiquetas aleatorias (evasivas: 59 % en train,
   50 % en validación). La curva de aprendizaje sigue subiendo y la brecha se cierra con más datos: no hay pérdida de
   capacidad predictiva en datos de la misma distribución.
+- Es el modelo de dos niveles **más robusto** (0,774 con las oraciones desordenadas; 0,654 con la última al inicio).
 
 ### Experimento 14 — Regresión logística en todos los niveles
 - Como el 13, con regresión logística (`C = 1`) en lugar del LinearSVC, que no está en el programa del curso.
@@ -287,15 +345,40 @@ puntuación (hace falta para separar oraciones).
 - Coeficientes del combinador legibles: confía menos en el modelo base con muchas opiniones, opiniones opuestas o
   final evasivo.
 
-### Decisión final
-- **Meseta confirmada:** desde el experimento 6, todas las ideas quedan entre 0,904 y 0,908 de CV, con diferencias
+### Comparación estadística de los finalistas (test hold-out)
+Los modelos 4, 10, 12 y 9 se reentrenaron con `X_train` (reproducen exactamente su accuracy de test) y se compararon
+reseña por reseña con **McNemar** y un **IC 95 % por bootstrap** (10.000 remuestreos):
+
+| Par | Diferencia | IC 95 % | p (McNemar) |
+|---|---|---|---|
+| 9 − 12 | +0,71 | [−0,37, +1,79] | 0,23 |
+| 9 − 4 | +0,54 | [−0,54, +1,63] | 0,35 |
+| 9 − 10 | +0,29 | [−0,79, +1,38] | 0,65 |
+| 10 − 12 | +0,42 | [−0,37, +1,25] | 0,35 |
+
+**Ninguna diferencia es significativa** (todos los intervalos incluyen el 0). Los experimentos 13 y 14 se compararon
+en CV con la prueba t corregida: 13 frente a la configuración del 9, +0,40 (p = 0,13); 14 frente a 13, −0,34
+(p = 0,04, la única diferencia significativa del proyecto).
+
+Al comparar las predicciones sobre eval, el 60–80 % de los desacuerdos entre estos modelos cae en reseñas de etiqueta
+casi aleatoria: las diferencias entre envíos en el leaderboard (±0,01) son en buena parte azar.
+
+### Estado de la decisión
+- **Meseta confirmada:** desde el experimento 6, todas las ideas quedan entre 0,903 y 0,909 de CV, con diferencias
   menores que la variación entre folds y que el ruido del leaderboard público. Los ≈ 3 puntos que faltan para el techo
   son errores dispersos que una representación de bolsa de palabras no captura; aprovecharlos requiere modelos
   secuenciales (Parte 2).
-- **Modelo final de la Parte 1: experimento 9** (mejor score público, como exige el enunciado). Alternativa
-  equivalente y más fácil de sustentar: experimento 8.
+- **Candidatos para la entrega:**
+
+  | | Exp. 13 | Exp. 12 | Exp. 14 | Exp. 9 |
+  |---|---|---|---|---|
+  | Por qué | mejor CV, más robusto, combinador legible | el más simple: un nivel, 3.000 features, brecha 1,5 | todo con regresión logística (programa del curso), mejor test | mejor score público |
+  | En contra | 4 modelos + cross-fitting | ≈ 0,5 puntos menos de CV que el 13 | −0,34 de CV frente al 13 (p = 0,04) | kernel RBF, bajó en el privado |
+
 - La **mayor parte de la mejora** del proyecto vino de la **representación** (texto por partes, detector de opinión,
-  polaridad por oración), no de la elección del clasificador: 0,736 → 0,887 (exp. 2) → 0,901 (exp. 4) → 0,907.
+  polaridad por oración), no de la elección del clasificador: 0,736 → 0,887 (exp. 2) → 0,901 (exp. 4) → 0,909 (exp. 13).
+- La **brecha de sobreajuste** se redujo de 7,6 (exp. 4) a 3,1 (exp. 11, chi²) y 1,5 puntos (exp. 12, sin reseñas
+  ruidosas) sin perder accuracy: lo eliminado no aportaba nada en datos nuevos.
 - Los experimentos 2 y 3 quedan como evidencia del compromiso entre accuracy y robustez: todos los modelos finales
   dependen de que el veredicto esté al final de la reseña, como ocurre en estos datos.
 
@@ -314,7 +397,12 @@ puntuación (hace falta para separar oraciones).
 | Intentar predecir las reseñas que terminan en evasiva | Su etiqueta es prácticamente aleatoria (experimento 4, sección 2.2). |
 | Separar las oraciones por tipo de conector (interacción en TF-IDF) | Empeora: cada columna queda con pocos datos (experimento 5). |
 | Stacking sin cross-fitting | El combinador aprende a confiar de más en el nivel 1; queda peor que el modelo de un nivel (experimento 7). |
-| Stemming, trigramas en la última opinión | Sin mejora (exploración del experimento 9). |
+| Trigramas en la última opinión | Sin mejora (exploración del experimento 9). |
+| Stacking con combinador SVM RBF (exp. 7 y 9) | Difícil de sustentar (kernel); su ventaja en el público no era significativa y bajó en el privado. Reemplazado por el combinador lineal con interacciones (exp. 8, 13). |
+| Excluir las reseñas ruidosas del combinador (nivel 2) | Empeora (exp. 13): el combinador necesita verlas para aprender a desconfiar de sus features. |
+| Regresión logística L1 / L2 / elastic net sin selección de features | Misma accuracy que chi² + LinearSVC, pero 5–10 puntos de brecha (exploración del exp. 12). |
+| Más de 3.000 features con chi² | Misma accuracy y más brecha (4,4 con 5.000; 5,6 con 8.000). |
+| Filtrar el grupo "conector secundario" | En su versión simple no es ruido: 79 % de acierto (exp. 13). |
 
 ---
 
@@ -328,21 +416,31 @@ puntuación (hace falta para separar oraciones).
 5. Al final, ajustar clasificador e hiperparámetros con CV (ahí casi no está la ganancia).
 
 Evolución de la accuracy de CV: **0,736** (exp. 1, bolsa de palabras) → **0,887** (exp. 2, final de la reseña) →
-**0,901** (exp. 4, detector de opinión) → **0,904–0,907** (exp. 6–9, dos niveles). Techo estimado ≈ 0,937.
+**0,901** (exp. 4, detector de opinión) → **0,904–0,907** (exp. 6–9, dos niveles) → **0,909** (exp. 13, dos niveles
+sin ruido en el nivel 1). Techo estimado ≈ 0,937.
+
+Evolución de la brecha train − CV (sobreajuste) con la accuracy constante en ≈ 0,90: **7,6** (exp. 4) → **3,1**
+(exp. 11, chi²) → **1,5** puntos (exp. 12, sin reseñas ruidosas).
 
 ---
 
 ## 7. Pendientes (consolidación para la entrega)
 
+- [x] Marcar en Kaggle los envíos finales para el ranking privado: `submission_12` + `submission_13`.
+- [ ] **Elegir el modelo de la entrega** (candidatos en la sección 5, "Estado de la decisión") y, si no es el del
+      mejor score público (9), **consultarlo con el profesor**: el enunciado pide el modelo del envío con mejor
+      resultado en la competencia.
 - [ ] **Notebook único de entrega** (el enunciado exige uno solo): exploración, preprocesamiento, validación, la
-      historia de los 9 experimentos con su tabla resumen y el **modelo final del experimento 9**.
-- [ ] Guardar el `.joblib` final con la normalización dentro del pipeline (que reciba texto crudo) y verificar que, al
-      cargarlo, reproduce exactamente `submission_09.csv`.
+      historia de los 14 experimentos con su tabla resumen, el análisis de sobreajuste, la comparación estadística y
+      el **modelo elegido** entrenado y evaluado completo.
+- [ ] Guardar el `.joblib` final y verificar en el notebook que, al cargarlo, reproduce exactamente su envío (las
+      clases propias deben estar definidas antes de cargarlo).
 - [ ] `requirements.txt` con las versiones y una celda que las imprima en el notebook final.
-- [ ] Marcar en Kaggle los envíos finales para el ranking privado: `submission_09` + `submission_07` u `submission_08`.
-- [ ] Registrar los scores públicos que falten (`submission_01`, `03`, `04`, `05`; el exacto del `08`).
-- [ ] Confirmar con el profesor que las SVM (LinearSVC y SVM RBF) cuentan como modelos "vistos en la primera parte del
-      curso" (si no, el experimento 8 usa solo regresión logística como combinador y rinde prácticamente igual).
+- [ ] Registrar los scores públicos que falten (`submission_01`, `03`, `04`, `05`, `10`, `12`, `14`; el exacto del `08`).
+- [ ] Corregir en los notebooks 13 y 14 el test del exp. 13: se imprime 0,9079 y el análisis dice 0,9083; y en el
+      análisis del 13, la diferencia con el 9 del combinador elegido (`C = 0,1`) es +0,40 con p = 0,127.
+- Uso de SVM: no forman parte del programa del curso, pero el grupo decidió usarlas siempre que se sepan explicar
+  (LinearSVC = clasificador lineal de margen máximo). Alternativa solo con regresión logística: experimento 14.
 
 ### Fechas
 - Cierre de la competencia de la Parte 1: **semana 9**.
